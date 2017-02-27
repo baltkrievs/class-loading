@@ -16,6 +16,7 @@ import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.log4j.Logger;
 
 import by.darashchonak.mentoring.app.constant.AppConst;
 import by.darashchonak.mentoring.lang.LangEN;
@@ -23,6 +24,8 @@ import by.darashchonak.mentoring.langs.Language;
 import by.darashchonak.mentoring.loader.CustomLoader;
 
 public class App {
+
+    final static Logger logger = Logger.getLogger(App.class);
 
     private CustomLoader classLoader;
     // We need at least one default language at startup
@@ -113,17 +116,18 @@ public class App {
     }
 
     private void showMainMenu() {
-        System.out.println(currentLanguage.getProperty("lang.ui.text.option.a"));
-        System.out.println(currentLanguage.getProperty("lang.ui.text.option.s"));
-        System.out.println(currentLanguage.getProperty("lang.ui.text.option.q"));
+        logger.info(currentLanguage.getProperty("lang.ui.text.option.a"));
+        logger.info(currentLanguage.getProperty("lang.ui.text.option.a"));
+        logger.info(currentLanguage.getProperty("lang.ui.text.option.s"));
+        logger.info(currentLanguage.getProperty("lang.ui.text.option.q"));
     }
 
     private void showAddLanguagesDialog(List<String> newLangs) {
 
         if (newLangs.isEmpty()) {
-            System.out.println(currentLanguage.getProperty("lang.ui.error.not.found"));
+            logger.info(currentLanguage.getProperty("lang.ui.error.not.found"));
         } else {
-            System.out.println(currentLanguage.getProperty("lang.ui.text.added.langs") + String.join(", ", newLangs));
+            logger.info(currentLanguage.getProperty("lang.ui.text.added.langs") + String.join(", ", newLangs));
         }
     }
 
@@ -132,9 +136,9 @@ public class App {
         String in = "";
 
         do {
-            System.out.println(currentLanguage.getProperty("lang.ui.text.available.langs")
+            logger.info(currentLanguage.getProperty("lang.ui.text.available.langs")
                     + String.join(", ", availableLangs.keySet()));
-            System.out.println(currentLanguage.getProperty("lang.ui.text.option.p"));
+            logger.info(currentLanguage.getProperty("lang.ui.text.option.p"));
 
             in = scanner.nextLine().trim().toLowerCase();
 
@@ -144,10 +148,10 @@ public class App {
             default:
                 Language lang = availableLangs.get(in);
                 if (null == lang) {
-                    System.out.println(currentLanguage.getProperty("lang.ui.error.bad.input"));
+                    logger.info(currentLanguage.getProperty("lang.ui.error.bad.input"));
                 } else {
                     currentLanguage = lang;
-                    System.out.println(currentLanguage.getProperty("lang.ui.text.lang.now") + lang.getLanguageName());
+                    logger.info(currentLanguage.getProperty("lang.ui.text.lang.now") + lang.getLanguageName());
                 }
             }
         } while (!in.equals("p"));
