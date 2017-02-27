@@ -8,19 +8,15 @@ public class LangEN extends Language {
 
     public LangEN() throws IOException, IllegalAccessException {
         super();
-        // TODO Auto-generated constructor stub
     }
 
     @Override
     public String getLanguageName() {
-        // TODO Auto-generated method stub
-        return null;
+        return "English";
     }
 
     @Override
     public String getLocaleName() {
-        // TODO Auto-generated method stub
         return "en";
     }
-
 }

@@ -8,19 +8,15 @@ public class LangBY extends Language {
 
     public LangBY() throws IOException, IllegalAccessException {
         super();
-        // TODO Auto-generated constructor stub
     }
 
     @Override
     public String getLanguageName() {
-        // TODO Auto-generated method stub
-        return "BY";
+        return "Беларуская";
     }
 
     @Override
     public String getLocaleName() {
-        // TODO Auto-generated method stub
         return "by";
     }
-
 }

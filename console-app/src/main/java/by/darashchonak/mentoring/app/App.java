@@ -4,11 +4,13 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.stream.Collectors;
@@ -25,26 +27,44 @@ public class App {
     private CustomLoader classLoader;
     // We need at least one default language at startup
     private Language currentLanguage;
-    Map<String, Language> availableLangs;
+    private Map<String, Language> availableLangs;
+    Scanner scanner;
 
     public App() throws IllegalAccessException, IOException {
         this.classLoader = new CustomLoader(new URL[] {}, getClass().getClassLoader());
         this.currentLanguage = new LangEN();
         this.availableLangs = new HashMap<>();
-        this.availableLangs.put(currentLanguage.getLanguageName(), currentLanguage);
+        this.availableLangs.put(currentLanguage.getLocaleName(), currentLanguage);
+        this.scanner = new Scanner(System.in);
     }
 
     public void start() throws InstantiationException, IllegalAccessException, IOException, ClassNotFoundException {
-        List<JarFile> jars = getJars();
-        System.out.println(jars.get(0).getName());
-        loadLanguage(jars.get(0));
+
+        String input = "";
+
+        do {
+            showMainMenu();
+            input = scanner.nextLine().trim().toLowerCase();
+
+            switch (input) {
+            case "q":
+                scanner.close();
+                break;
+            case "a":
+                loadLanguage(getJars());
+                break;
+            case "s":
+                switchLanguage();
+            default:
+            }
+
+        } while (!input.equals("q"));
     }
 
     private List<JarFile> getJars() throws IOException, InstantiationException, IllegalAccessException {
         Collection<File> files = FileUtils.listFiles(new File(AppConst.LANG_DIR), new String[] { AppConst.FILE_EXT },
                 true);
 
-        files.stream().forEach(f -> System.out.println(f.getName()));
         List<JarFile> jarFiles = files.stream().map(file -> {
             try {
                 return new JarFile(file.getAbsolutePath());
@@ -56,33 +76,35 @@ public class App {
         return jarFiles;
     }
 
-    private boolean loadLanguage(JarFile jarFile)
+    private boolean loadLanguage(List<JarFile> jarFiles)
             throws ClassNotFoundException, MalformedURLException, InstantiationException, IllegalAccessException {
 
         boolean isLang = false;
+        List<String> newLangs = new ArrayList<>();
 
-        Enumeration<JarEntry> entries = jarFile.entries();
-        classLoader.addURL(getJarUrl(jarFile));
+        for (JarFile jarFile : jarFiles) {
 
-        while (entries.hasMoreElements()) {
-            JarEntry entry = entries.nextElement();
-            String className = entry.getName().replaceAll("/", ".");
+            Enumeration<JarEntry> entries = jarFile.entries();
+            classLoader.addURL(getJarUrl(jarFile));
 
-            if (className.endsWith(".class")) {
-                System.out.println(className);
-                Class<?> clazz = classLoader.loadClass(className.substring(0, className.length() - 6));
-                Class<?> superClass = clazz.getSuperclass();
-                if (superClass.isAssignableFrom(Language.class)) {
-                    Language lang = (Language) clazz.newInstance();
-                    availableLangs.put(lang.getLanguageName(), lang);
-                    System.out.println(lang.getLanguageName());
-                    isLang = true;
-                    break;
+            while (entries.hasMoreElements()) {
+                JarEntry entry = entries.nextElement();
+                String className = entry.getName().replaceAll("/", ".");
+
+                if (className.endsWith(".class")) {
+                    Class<?> clazz = classLoader.loadClass(className.substring(0, className.length() - 6));
+                    Class<?> superClass = clazz.getSuperclass();
+                    if (superClass.isAssignableFrom(Language.class)) {
+                        Language lang = (Language) clazz.newInstance();
+                        availableLangs.put(lang.getLocaleName(), lang);
+                        newLangs.add(lang.getLanguageName());
+                        isLang = true;
+                        break;
+                    }
                 }
             }
         }
-
-        System.out.println(isLang);
+        showAddLanguagesDialog(newLangs);
         return isLang;
     }
 
@@ -90,4 +112,44 @@ public class App {
         return new URL("jar:file:" + jarFile.getName() + "!/");
     }
 
+    private void showMainMenu() {
+        System.out.println(currentLanguage.getProperty("lang.ui.text.option.a"));
+        System.out.println(currentLanguage.getProperty("lang.ui.text.option.s"));
+        System.out.println(currentLanguage.getProperty("lang.ui.text.option.q"));
+    }
+
+    private void showAddLanguagesDialog(List<String> newLangs) {
+
+        if (newLangs.isEmpty()) {
+            System.out.println(currentLanguage.getProperty("lang.ui.error.not.found"));
+        } else {
+            System.out.println(currentLanguage.getProperty("lang.ui.text.added.langs") + String.join(", ", newLangs));
+        }
+    }
+
+    private void switchLanguage() {
+
+        String in = "";
+
+        do {
+            System.out.println(currentLanguage.getProperty("lang.ui.text.available.langs")
+                    + String.join(", ", availableLangs.keySet()));
+            System.out.println(currentLanguage.getProperty("lang.ui.text.option.p"));
+
+            in = scanner.nextLine().trim().toLowerCase();
+
+            switch (in) {
+            case "p":
+                break;
+            default:
+                Language lang = availableLangs.get(in);
+                if (null == lang) {
+                    System.out.println(currentLanguage.getProperty("lang.ui.error.bad.input"));
+                } else {
+                    currentLanguage = lang;
+                    System.out.println(currentLanguage.getProperty("lang.ui.text.lang.now") + lang.getLanguageName());
+                }
+            }
+        } while (!in.equals("p"));
+    }
 }
