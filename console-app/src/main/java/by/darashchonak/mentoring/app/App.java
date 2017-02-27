@@ -117,7 +117,6 @@ public class App {
 
     private void showMainMenu() {
         logger.info(currentLanguage.getProperty("lang.ui.text.option.a"));
-        logger.info(currentLanguage.getProperty("lang.ui.text.option.a"));
         logger.info(currentLanguage.getProperty("lang.ui.text.option.s"));
         logger.info(currentLanguage.getProperty("lang.ui.text.option.q"));
     }

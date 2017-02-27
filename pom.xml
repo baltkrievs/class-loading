@@ -11,6 +11,7 @@
         <module>console-app</module>
         <module>language</module>
         <module>lang_en</module>
+        <module>lang_ru</module>
     </modules>
     <build>
         <plugins>
