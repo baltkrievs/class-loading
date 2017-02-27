@@ -27,11 +27,11 @@ public class App {
 
     final static Logger logger = Logger.getLogger(App.class);
 
-    private CustomLoader classLoader;
+    private final CustomLoader classLoader;
     // We need at least one default language at startup
     private Language currentLanguage;
-    private Map<String, Language> availableLangs;
-    Scanner scanner;
+    private final Map<String, Language> availableLangs;
+    private final Scanner scanner;
 
     public App() throws IllegalAccessException, IOException {
         this.classLoader = new CustomLoader(new URL[] {}, getClass().getClassLoader());
@@ -58,6 +58,7 @@ public class App {
                 break;
             case "s":
                 switchLanguage();
+                break;
             default:
             }
 
