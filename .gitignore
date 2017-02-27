@@ -15,6 +15,7 @@
 log/
 target/
 
+*.jar
 
 dependency-reduced-pom.xml
 bin/
