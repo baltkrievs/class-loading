@@ -1,55 +1,51 @@
 package by.darashchonak.mentoring.clazzload;
 
 import java.io.IOException;
-
-import com.googlecode.lanterna.TerminalSize;
-import com.googlecode.lanterna.TextColor;
-import com.googlecode.lanterna.gui2.BasicWindow;
-import com.googlecode.lanterna.gui2.Button;
-import com.googlecode.lanterna.gui2.DefaultWindowManager;
-import com.googlecode.lanterna.gui2.EmptySpace;
-import com.googlecode.lanterna.gui2.GridLayout;
-import com.googlecode.lanterna.gui2.Label;
-import com.googlecode.lanterna.gui2.MultiWindowTextGUI;
-import com.googlecode.lanterna.gui2.Panel;
-import com.googlecode.lanterna.gui2.TextBox;
-import com.googlecode.lanterna.screen.Screen;
-import com.googlecode.lanterna.screen.TerminalScreen;
-import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
-import com.googlecode.lanterna.terminal.Terminal;
+import java.io.InputStream;
+import java.util.Properties;
 
 public class Main {
     public static void main(String[] args) throws IOException {
 
-        // Setup terminal and screen layers
-        Terminal terminal = new DefaultTerminalFactory().createTerminal();
-        Screen screen = new TerminalScreen(terminal);
-        screen.startScreen();
-
-        // Create panel to hold components
-        Panel panel = new Panel();
-        panel.setLayoutManager(new GridLayout(2));
-
-        panel.addComponent(new Label("Forename"));
-        panel.addComponent(new TextBox());
-
-        panel.addComponent(new Label("Surname"));
-        panel.addComponent(new TextBox());
-
-        panel.addComponent(new EmptySpace(new TerminalSize(0, 0))); // Empty
-                                                                    // space
-                                                                    // underneath
-                                                                    // labels
-        panel.addComponent(new Button("Submit"));
+        // // Setup terminal and screen layers
+        // Terminal terminal = new DefaultTerminalFactory().createTerminal();
+        // Screen screen = new TerminalScreen(terminal);
+        // screen.startScreen();
+        //
+        // // Create panel to hold components
+        // Panel panel = new Panel();
+        // panel.setLayoutManager(new GridLayout(2));
+        //
+        // panel.addComponent(new Label("Forename"));
+        // panel.addComponent(new TextBox());
+        //
+        // panel.addComponent(new Label("Surname"));
+        // panel.addComponent(new TextBox());
+        //
+        // panel.addComponent(new EmptySpace(new TerminalSize(0, 0))); // Empty
+        // // space
+        // // underneath
+        // // labels
+        // panel.addComponent(new Button("Submit"));
 
         // Create window to hold the panel
-        BasicWindow window = new BasicWindow();
-        window.setComponent(panel);
+        // BasicWindow window = new BasicWindow();
+        // window.setComponent(panel);
 
         // Create gui and start gui
-        MultiWindowTextGUI gui = new MultiWindowTextGUI(screen, new DefaultWindowManager(),
-                new EmptySpace(TextColor.ANSI.BLUE));
-        gui.addWindowAndWait(window);
+        // MultiWindowTextGUI gui = new MultiWindowTextGUI(screen, new
+        // DefaultWindowManager(),
+        // new EmptySpace(TextColor.ANSI.BLUE));
+        // gui.addWindowAndWait(window);
+
+        InputStream input;// = new FileInputStream("lang.properties");
+        input = Main.class.getClassLoader().getResourceAsStream("lang.properties");
+        Properties props = new Properties();
+        props.load(input);
+
+        String text = props.getProperty("lang.ui.text");
+
+        System.out.println(text);
 
     }
 }
